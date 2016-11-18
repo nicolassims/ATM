@@ -1,1 +1,11 @@
 Name,card#(4),pin#(3),checkings,savings
+
+function printAllTest() {
+    for (let i = 0; i < accounts.length; i++) {
+        for (let j = 0; j < COLUMNS; j++) {
+            console.log(i + ` ` + j + ` ` + accounts[i][j] + `,`);
+        }
+        console.log(`\n`);
+    }
+    continueResponse = 0;
+} //DELET THIS
