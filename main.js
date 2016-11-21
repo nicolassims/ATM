@@ -26,7 +26,7 @@ function main() {
         if (transactionType == 0) {
             performDeposit();
         } else if (transactionType == 1) {
-            
+            performWithdrawal();
         } else if (transactionType == 2) {
             
         } else {
@@ -43,8 +43,7 @@ function setContinueResponse() {
     } else {
         continueResponse = PROMPT.question(`\nDo you want to continue?\n[0] = No\n[1] = Yes\n>`);
         while (continueResponse != 0 && continueResponse != 1) {
-            continueResponse = PROMPT.question(`Please re-check your input.\n\nDo you want to continue?\n[0] = No\n
-            [1] = Yes\n>`);
+            continueResponse = PROMPT.question(`Please re-check your input.\nDo you want to continue?\n[0] = No\n[1] = Yes\n>`);
         }
     }
 }
@@ -67,7 +66,7 @@ function setCardNumber() {
 function setPersonalIdentificationNumber() {
     personalIdentificationNumber = PROMPT.question(`What is your three-digit PIN?\n>`);
     while (!/^[0-9]{3}$/.test(personalIdentificationNumber)) {
-        personalIdentificationNumber = PROMPT.question(`Please re-check your input.\nWhat is your three-digit PIN?\n>`)
+        personalIdentificationNumber = PROMPT.question(`Please re-check your input.\nWhat is your three-digit PIN?\n>`);
     }
 }
 
@@ -85,9 +84,8 @@ function setMatch() {
 
 function setAccountType() {
     accountType = PROMPT.question(`Which account would you like to access?\n[0] = Checkings\n[1] = Savings\n>`);
-    while (accountType != 0 && accountType != 1) {
-        accountType = PROMPT.question(`Please re-check your input.\nWhich account would you like to access?\n` +
-            `[0] = Checkings\n[1] = Savings\n>`);
+    while (accountType != 0 && accountType != 1 || accountType == '') {
+        accountType = PROMPT.question(`Please re-check your input.\nWhich account would you like to access?\n[0] = Checkings\n[1] = Savings\n>`);
     }
     if (accountType == 0) {
         accountType = `checkings`;
@@ -97,18 +95,15 @@ function setAccountType() {
 }
 
 function setTransactionType() {
-    transactionType = PROMPT.question(`You\'ve selected your ${accountType} account.\n` +
-        `What would you like to do to this account?\n[0] = Deposit\n[1] = Withdraw\n[2] = Transfer\n[3] = Inquiry\n>`);
-    while (transactionType != 0 && transactionType != 1 && transactionType != 2 && transactionType != 3) {
-        accountType = PROMPT.question(`Please re-check your input.\nYou\'ve selected your ${accountType} account\n` +
-            `What would you like to do to this account?\n[0] = Deposit\n[1] = Withdraw\n[2] = Transfer\n` +
-            `[3] = Inquiry\n>`);
+    transactionType = PROMPT.question(`You\'ve selected your ${accountType} account.\nWhat would you like to do to this account?\n[0] = Deposit\n[1] = Withdraw\n[2] = Transfer\n[3] = Inquiry\n>`);
+    while (transactionType != 0 && transactionType != 1 && transactionType != 2 && transactionType != 3 || transactionType == '') {
+        transactionType = PROMPT.question(`Please re-check your input.\nYou\'ve selected your ${accountType} account.\nWhat would you like to do to this account?\n[0] = Deposit\n[1] = Withdraw\n[2] = Transfer\n[3] = Inquiry\n>`);
     }
-    if (accountType == 0) {
+    if (transactionType == 0) {
         console.log(`You\'ve elected to perform a deposit into your ${accountType} account.`);
-    } else if (accountType == 1) {
+    } else if (transactionType == 1) {
         console.log(`You\'ve elected to perform a withdrawal from your ${accountType} account.`);
-    } else if (accountType == 2) {
+    } else if (transactionType == 2) {
         if (accountType == `Checkings`) {
             console.log(`You\'ve elected to transfer money from your ${accountType} account to your Savings account.`);
         } else {
@@ -124,17 +119,39 @@ function performDeposit() {
         if (accounts[i][1] == cardNumber && accounts[i][2] == personalIdentificationNumber) {
             let depositAmount = PROMPT.question(`How much would you like to deposit into your ${accountType} account?\n>`);
             while (depositAmount <= 0) {
-                depositAmount = PROMPT.question(`Please re-check your input.\n
-                    How much would you like to deposit into your ${accountType} account?\n>`);
+                depositAmount = PROMPT.question(`Please re-check your input.\nHow much would you like to deposit into your ${accountType} account?\n>`);
             }
             if (accountType = `checkings`) {
-                accounts[i][CHECKINGCOLUMN] += depositAmount;
-                console.log(`You have deposited ${depositAmount} into your ${accountType} account.\n
-                Your ${accountType} account's new balance is ${accounts[i][CHECKINGCOLUMN]}.`);
+                accounts[i][CHECKINGCOLUMN] = accounts[i][CHECKINGCOLUMN] - -depositAmount;
+                console.log(`You have deposited ${depositAmount} into your ${accountType} account.\nYour ${accountType} account's new balance is ${accounts[i][CHECKINGCOLUMN]}.`);
             } else {
-                accounts[i][SAVINGSCOLUMN] += depositAmount;
-                console.log(`You have deposited ${depositAmount} into your ${accountType} account.\n
-                Your ${accountType} account's new balance is ${accounts[i][SAVINGSCOLUMN]}.`);
+                accounts[i][SAVINGSCOLUMN] = accounts[i][SAVINGSCOLUMN] - -depositAmount;
+                console.log(`You have deposited ${depositAmount} into your ${accountType} account.\nYour ${accountType} account's new balance is ${accounts[i][SAVINGSCOLUMN]}.`);
+            }
+        }
+    }
+    return main();
+}
+
+function performWithdrawal() {
+    for (let i = 0; i < accounts.length; i++) {
+        if (accounts[i][1] == cardNumber && accounts[i][2] == personalIdentificationNumber) {
+            let withdrawalAmount = PROMPT.question(`How much would you like to withdraw from your ${accountType} account?\n>`);
+            if (accountType == `checkings`) {
+                while (withdrawalAmount <= 0 || withdrawalAmount > accounts[i][CHECKINGCOLUMN]) {
+                    withdrawalAmount = PROMPT.question(`Please re-check your input.\nHow much would you like to withdraw from your checkings account?\n>`);
+                }
+            } else {
+                while (withdrawalAmount <= 0 || withdrawalAmount > accounts[i][SAVINGSCOLUMN]) {
+                    withdrawalAmount = PROMPT.question(`Please re-check your input.\nHow much would you like to withdraw from your savings account?\n>`);
+                }
+            }
+            if (accountType == `checkings`) {
+                accounts[i][CHECKINGCOLUMN] = accounts[i][CHECKINGCOLUMN] - withdrawalAmount;
+                console.log(`You have withdrawn ${withdrawalAmount} from your ${accountType} account.\nYour ${accountType} account's new balance is ${accounts[i][CHECKINGCOLUMN]}.`);
+            } else {
+                accounts[i][SAVINGSCOLUMN] = accounts[i][SAVINGSCOLUMN] - withdrawalAmount;
+                console.log(`You have withdrawn ${withdrawalAmount} from your ${accountType} account.\nYour ${accountType} account's new balance is ${accounts[i][SAVINGSCOLUMN]}.`);
             }
         }
     }
