@@ -28,9 +28,9 @@ function main() {
         } else if (transactionType == 1) {
             performWithdrawal();
         } else if (transactionType == 2) {
-            
+            performTransferral();
         } else {
-            viewAccountBalance();
+            performInquiry();
         }
     }
 }
@@ -78,6 +78,7 @@ function setMatch() {
     }
     if (match != 1) {
         match = 0;
+        console.log('I\'m sorry, we could not seem to find your account.');
         return main();
     } 
 }
@@ -104,10 +105,10 @@ function setTransactionType() {
     } else if (transactionType == 1) {
         console.log(`You\'ve elected to perform a withdrawal from your ${accountType} account.`);
     } else if (transactionType == 2) {
-        if (accountType == `Checkings`) {
-            console.log(`You\'ve elected to transfer money from your ${accountType} account to your Savings account.`);
+        if (accountType == `checkings`) {
+            console.log(`You\'ve elected to transfer money from your checkings account to your savings account.`);
         } else {
-            console.log(`You\'ve elected to transfer money from your Savings account to your ${accountType} account.`);
+            console.log(`You\'ve elected to transfer money from your savings account to your checkings account.`);
         }
     } else {
         console.log(`You\'ve elected to see the amount of money in your ${accountType} account.`);
@@ -141,24 +142,46 @@ function performWithdrawal() {
                 while (withdrawalAmount <= 0 || withdrawalAmount > accounts[i][CHECKINGCOLUMN]) {
                     withdrawalAmount = PROMPT.question(`Please re-check your input.\nHow much would you like to withdraw from your checkings account?\n>`);
                 }
+                accounts[i][CHECKINGCOLUMN] = accounts[i][CHECKINGCOLUMN] - withdrawalAmount;
+                console.log(`You have withdrawn ${withdrawalAmount} from your ${accountType} account.\nYour ${accountType} account's new balance is ${accounts[i][CHECKINGCOLUMN]}.`);
             } else {
                 while (withdrawalAmount <= 0 || withdrawalAmount > accounts[i][SAVINGSCOLUMN]) {
                     withdrawalAmount = PROMPT.question(`Please re-check your input.\nHow much would you like to withdraw from your savings account?\n>`);
                 }
-            }
-            if (accountType == `checkings`) {
-                accounts[i][CHECKINGCOLUMN] = accounts[i][CHECKINGCOLUMN] - withdrawalAmount;
-                console.log(`You have withdrawn ${withdrawalAmount} from your ${accountType} account.\nYour ${accountType} account's new balance is ${accounts[i][CHECKINGCOLUMN]}.`);
-            } else {
                 accounts[i][SAVINGSCOLUMN] = accounts[i][SAVINGSCOLUMN] - withdrawalAmount;
                 console.log(`You have withdrawn ${withdrawalAmount} from your ${accountType} account.\nYour ${accountType} account's new balance is ${accounts[i][SAVINGSCOLUMN]}.`);
+
             }
         }
     }
     return main();
 }
 
-function viewAccountBalance() {
+function performTransferral() {
+    for (let i = 0; i < accounts.length; i++) {
+        if (accounts[i][1] == cardNumber && accounts[i][2] == personalIdentificationNumber) {
+            let transferAmount = PROMPT.question(`How much would you like to transfer from your ${accountType} account?\n>`);
+            if (accountType == `checkings`) {
+                while (transferAmount <= 0 || transferAmount > accounts[i][CHECKINGCOLUMN]) {
+                    transferAmount = PROMPT.question(`Please re-check your input.\nHow much would you like to transfer from your checkings account?\n>`);
+                }
+                accounts[i][SAVINGSCOLUMN] = accounts[i][SAVINGSCOLUMN] - -transferAmount;
+                accounts[i][CHECKINGCOLUMN] =  accounts[i][CHECKINGCOLUMN] - transferAmount;
+                console.log(`You have transferred ${transferAmount} from your checkings account to your savings account.\nYour checkings account's new balance is ${accounts[i][CHECKINGCOLUMN]}.\nYour savings account's new balance is ${accounts[i][SAVINGSCOLUMN]}.\n`);
+            } else {
+                while (transferAmount <= 0 || transferAmount > accounts[i][SAVINGSCOLUMN]) {
+                    transferAmount = PROMPT.question(`Please re-check your input.\nHow much would you like to transfer from your savings account?\n>`);
+                }
+                accounts[i][SAVINGSCOLUMN] = accounts[i][SAVINGSCOLUMN] - transferAmount;
+                accounts[i][CHECKINGCOLUMN] =  accounts[i][CHECKINGCOLUMN] - -transferAmount;
+                console.log(`You have transferred ${transferAmount} from your savings account to your checkings account.\nYour savings account's new balance is ${accounts[i][SAVINGSCOLUMN]}.\nYour checkings account's new balance is ${accounts[i][CHECKINGCOLUMN]}.\n`);
+            }
+        }
+    }
+    return main();
+}
+
+function performInquiry() {
     for (let i = 0; i < accounts.length; i++) {
         if (accounts[i][1] == cardNumber && accounts[i][2] == personalIdentificationNumber) {
             if (accountType = `checkings`) {
