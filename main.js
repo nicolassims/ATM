@@ -166,14 +166,14 @@ function performTransferral() {
                     transferAmount = PROMPT.question(`Please re-check your input.\nHow much would you like to transfer from your checkings account?\n>`);
                 }
                 accounts[i][SAVINGSCOLUMN] = accounts[i][SAVINGSCOLUMN] - -transferAmount;
-                accounts[i][CHECKINGCOLUMN] =  accounts[i][CHECKINGCOLUMN] - transferAmount;
+                accounts[i][CHECKINGCOLUMN] = accounts[i][CHECKINGCOLUMN] - transferAmount;
                 console.log(`You have transferred ${transferAmount} from your checkings account to your savings account.\nYour checkings account's new balance is ${accounts[i][CHECKINGCOLUMN]}.\nYour savings account's new balance is ${accounts[i][SAVINGSCOLUMN]}.\n`);
             } else {
                 while (transferAmount <= 0 || transferAmount > accounts[i][SAVINGSCOLUMN]) {
                     transferAmount = PROMPT.question(`Please re-check your input.\nHow much would you like to transfer from your savings account?\n>`);
                 }
                 accounts[i][SAVINGSCOLUMN] = accounts[i][SAVINGSCOLUMN] - transferAmount;
-                accounts[i][CHECKINGCOLUMN] =  accounts[i][CHECKINGCOLUMN] - -transferAmount;
+                accounts[i][CHECKINGCOLUMN] = accounts[i][CHECKINGCOLUMN] - -transferAmount;
                 console.log(`You have transferred ${transferAmount} from your savings account to your checkings account.\nYour savings account's new balance is ${accounts[i][SAVINGSCOLUMN]}.\nYour checkings account's new balance is ${accounts[i][CHECKINGCOLUMN]}.\n`);
             }
         }
